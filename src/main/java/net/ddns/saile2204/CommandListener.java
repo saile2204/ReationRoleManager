@@ -1,6 +1,6 @@
 package net.ddns.saile2204;
 
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -16,6 +16,13 @@ public class CommandListener extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
         MessageChannel messageChannel = event.getChannel();
+
+        /*ReactionRole Simp = new ReactionRole("Simp");
+        Simp.setMessageID("761948924055257110");
+        Simp.setRole("Simp");
+        Simp.setEmoji("21084108249190834908012");
+        reactionRoles.add(Simp);*/
+
 
         if(event.getMessage().getContentRaw().startsWith(prefix)){
             String[] command = event.getMessage().getContentRaw().split(" ");
@@ -49,23 +56,29 @@ public class CommandListener extends ListenerAdapter {
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
 
-        System.out.println(event.getReactionEmote());
+
 
         for (ReactionRole reactionRole : reactionRoles) {
+            Role role = event.getGuild().getRolesByName(reactionRole.getName(), false).get(0);
             String name = reactionRole.getName();
-            String role = reactionRole.getRole();
             String messageID = reactionRole.getMessageID();
-            String emoji = reactionRole.getEmoji();
+            //Emote emote = event.getJDA().getEmoteById(reactionRole.getEmoji());
+            //System.out.println(event.getReactionEmote().getId());
+
+            if(event.isFromType(ChannelType.TEXT)){
+                System.out.println("Type Right");
+                if(event.getMessageId().contentEquals(messageID)){
+                    System.out.println("IDRight" + event.getReactionEmote().getId());
+                    if(event.getReactionEmote().getId().equals(reactionRole.getEmoji())){
+                        System.out.println("EmojiRight");
 
 
-            if(event.getMessageId().contentEquals(messageID)){
-                System.out.println("soos");
+                        System.out.println(event.getMember().getNickname() + "has Received Role " + reactionRole.getRole());
+                        event.getChannel().sendMessage(event.getMember().getNickname() + "has Received Role " + role).queue();
+                        event.getGuild().addRoleToMember(event.getMember(), role).queue();
+                    }
 
-
-                event.getJDA().getRolesByName(role, false);
-                event.getGuild().addRoleToMember(event.getMember(), event.getJDA().getRolesByName(role, false).get(1)).queue();
-                event.getChannel().sendMessage("Role " + role + " added to " + event.getMember());
-
+                }
             }
 
         }
