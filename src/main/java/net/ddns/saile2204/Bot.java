@@ -8,7 +8,7 @@ import javax.security.auth.login.LoginException;
 
 public class Bot {
 
-    String token = "NzYxNjQwNjU1OTU2MjEzODIw.X3djIg.sV9yS9TpQkht50zUxTD2SQAhoxE";
+    String token = "";
 
 
     public Bot() throws LoginException {
