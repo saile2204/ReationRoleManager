@@ -14,6 +14,7 @@ public class CommandListener extends ListenerAdapter {
     String prefix = "!";
     public ArrayList<ReactionRole> reactionRoles = new ArrayList<ReactionRole>();
     public ArrayList<message> messages = new ArrayList<message>();
+    public ArrayList<String> mutes = new ArrayList<String>();
 
 
     @Override
@@ -34,6 +35,12 @@ public class CommandListener extends ListenerAdapter {
         Simp.setEmoji("21084108249190834908012");
         reactionRoles.add(Simp);*/
 
+        for(String item : mutes){
+            if(item.equals(event.getAuthor().getId())){
+                event.getMessage().delete().queue();
+            }
+        }
+
 
         if(event.getMessage().getContentRaw().startsWith(prefix)){
             String[] command = event.getMessage().getContentRaw().split(" ");
@@ -53,6 +60,12 @@ public class CommandListener extends ListenerAdapter {
                 }
                 else if(command[0].substring(1).equals("getData")){
                     getData(event, command);
+                }
+                else if(command[0].substring(1).equals("mute")){
+                    mute(event, command);
+                }
+                else if(command[0].substring(1).equals("unmute")){
+                    unmute(event, command);
                 }
                 else if(command[0].substring(1).equals("fclear")){
                     try {
@@ -128,8 +141,6 @@ public class CommandListener extends ListenerAdapter {
         reactionRoles.add(new ReactionRole(name));
         event.getChannel().sendMessage("Role added").queue();
     }
-
-
 
     private void setRole(GuildMessageReceivedEvent event, String[] commandVar){
 
@@ -247,6 +258,27 @@ public class CommandListener extends ListenerAdapter {
 
     }
 
+    public void mute(GuildMessageReceivedEvent event, String[] commandVar){
+        String ID = commandVar[1];
+
+        for (int i = 0; i < mutes.size(); i++) {
+            if(ID == event.getAuthor().getId()){
+                return;
+            }
+        }
+        mutes.add(ID);
+    }
+
+    public void unmute(GuildMessageReceivedEvent event, String[] commandVar){
+        String ID = commandVar[1];
+
+        for (int i = 0; i < mutes.size(); i++) {
+            if(ID == event.getAuthor().getId()){
+                mutes.remove(i);
+            }
+        }
+
+    }
 
 
     ArrayList<ReactionRole> getReactionRoles(){
