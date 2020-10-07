@@ -8,12 +8,13 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CommandListener extends ListenerAdapter {
 
     String prefix = "!";
     public ArrayList<ReactionRole> reactionRoles = new ArrayList<ReactionRole>();
-    public ArrayList<message> messages = new ArrayList<message>();
+    //public ArrayList<message> messages = new ArrayList<message>();
     public ArrayList<String> mutes = new ArrayList<String>();
 
 
@@ -21,19 +22,6 @@ public class CommandListener extends ListenerAdapter {
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
         MessageChannel messageChannel = event.getChannel();
 
-        try{
-            if(!event.getMessage().getContentRaw().startsWith("$")){
-                messages.add(new message(messageChannel, event.getMessage().getId()));
-            }
-        }catch (Exception exception){
-            System.out.println("Message Add Exception");
-        }
-
-        /*ReactionRole Simp = new ReactionRole("Simp");
-        Simp.setMessageID("761948924055257110");
-        Simp.setRole("Simp");
-        Simp.setEmoji("21084108249190834908012");
-        reactionRoles.add(Simp);*/
 
         for(String item : mutes){
             if(item.equals(event.getAuthor().getId())){
@@ -61,6 +49,9 @@ public class CommandListener extends ListenerAdapter {
                 else if(command[0].substring(1).equals("getData")){
                     getData(event, command);
                 }
+                else if(command[0].substring(1).equals("removeReactionRole")){
+                    removeReactionRole(command);
+                }
                 else if(command[0].substring(1).equals("mute")){
                     mute(event, command);
                 }
@@ -68,11 +59,7 @@ public class CommandListener extends ListenerAdapter {
                     unmute(event, command);
                 }
                 else if(command[0].substring(1).equals("fclear")){
-                    try {
-                        clear(event);
-                    }catch (Exception exception){
-                        System.out.println("Call Exception");
-                    }
+                    clear(event, command);
                 }
                 else if(command[0].substring(1).equals("bye")){
                     event.getJDA().shutdown();
@@ -239,22 +226,24 @@ public class CommandListener extends ListenerAdapter {
         }
     }
 
-    public void clear(GuildMessageReceivedEvent event){
+    public void removeReactionRole(String[] commandVar){
 
-        try {
-            for(message item : messages){
-                if(item.getChannel().getId().equals(event.getChannel().getId())){
-                    try{
-                        item.getChannel().deleteMessageById(item.getMessageID()).queue();
-                    }catch (Exception exception){
-                        System.out.println("Message delete Error");
-                    }
-                }
+        for (int i = 0; i <= reactionRoles.size(); i++) {
+            if(reactionRoles.get(i).getName().equals(commandVar[1])){
+                reactionRoles.remove(i);
             }
-            System.out.println("Channel Cleared");
-        }catch (Exception exception){
-            System.out.println("Got an CFRay Exception");
         }
+
+    }
+
+    public void clear(GuildMessageReceivedEvent event, String[] commandVar){
+        List<Message> messages = event.getChannel().getHistory().retrievePast(Integer.parseInt(commandVar[1])).complete();
+
+        for (Message message : messages){
+
+            event.getChannel().deleteMessageById(message.getId()).queue();
+        }
+        System.out.println("Channel Cleared");
 
     }
 
@@ -279,7 +268,6 @@ public class CommandListener extends ListenerAdapter {
         }
 
     }
-
 
     ArrayList<ReactionRole> getReactionRoles(){
         return reactionRoles;
