@@ -56,12 +56,12 @@ public class CommandListener extends ListenerAdapter {
                     mute(event, command);
                 }
                 else if(command[0].substring(1).equals("unmute")){
-                    unmute(event, command);
+                    unmute(event);
                 }
                 else if(command[0].substring(1).equals("fclear")){
                     clear(event, command);
                 }
-                else if(command[0].substring(1).equals("bye")){
+                else if(command[0].substring(1).equals("bye") && event.getAuthor().getId().equals("275899874858500096")){
                     event.getJDA().shutdown();
                 }
 
@@ -258,15 +258,8 @@ public class CommandListener extends ListenerAdapter {
         mutes.add(ID);
     }
 
-    public void unmute(GuildMessageReceivedEvent event, String[] commandVar){
-        String ID = commandVar[1];
-
-        for (int i = 0; i < mutes.size(); i++) {
-            if(ID == event.getAuthor().getId()){
-                mutes.remove(i);
-            }
-        }
-
+    public void unmute(GuildMessageReceivedEvent event){
+        mutes.clear();
     }
 
     ArrayList<ReactionRole> getReactionRoles(){
