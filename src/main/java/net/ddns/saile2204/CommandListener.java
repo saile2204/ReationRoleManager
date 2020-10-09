@@ -52,14 +52,18 @@ public class CommandListener extends ListenerAdapter {
                 else if(command[0].substring(1).equals("removeReactionRole")){
                     removeReactionRole(command);
                 }
-                else if(command[0].substring(1).equals("mute")){
+                else if(command[0].substring(1).equals("mute") && event.getAuthor().getId().equals("275899874858500096")){
                     mute(event, command);
                 }
-                else if(command[0].substring(1).equals("unmute")){
+                else if(command[0].substring(1).equals("unmute") && event.getAuthor().getId().equals("275899874858500096")){
                     unmute(event);
                 }
                 else if(command[0].substring(1).equals("fclear")){
                     clear(event, command);
+                }
+                else if(command[0].substring(1).equals("spam")){
+                    spam(event, command);
+
                 }
                 else if(command[0].substring(1).equals("bye") && event.getAuthor().getId().equals("275899874858500096")){
                     event.getJDA().shutdown();
@@ -256,10 +260,18 @@ public class CommandListener extends ListenerAdapter {
             }
         }
         mutes.add(ID);
+        event.getChannel().sendMessage("User " + event.getJDA().getUserById(ID).getName() + " has bin mutet.").queue();
     }
 
     public void unmute(GuildMessageReceivedEvent event){
         mutes.clear();
+        event.getChannel().sendMessage("All Users Umutet").queue();
+    }
+
+    public void spam(GuildMessageReceivedEvent event, String[] commandVar){
+        for (int i = 0; i < Integer.parseInt(commandVar[2]); i++) {
+            event.getChannel().sendMessage(commandVar[1]).queue();
+        }
     }
 
     ArrayList<ReactionRole> getReactionRoles(){
